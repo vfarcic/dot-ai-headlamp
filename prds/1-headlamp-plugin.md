@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 0/12 features complete (Foundation phase — Feature 1 rework needed)
+**Progress**: 1/12 features complete (Foundation phase — Feature 1 done, Feature 2 next)
 
 ## Problem Statement
 
@@ -53,10 +53,10 @@ Headlamp Browser UI
 
 #### 1. Plugin Settings Page
 Configure dot-ai Service discovery via `registerPluginSettings()`.
-- [ ] Text input for Service name (default: `dot-ai`)
-- [ ] Text input for namespace (default: `dot-ai`)
-- [ ] Connection test button (via `ApiProxy.request()`)
-- [ ] Persist via `ConfigStore`
+- [x] Text input for Service name (default: `dot-ai`)
+- [x] Text input for namespace (default: `dot-ai`)
+- [~] Connection test button — removed: multi-cluster Headlamp makes per-settings testing meaningless; validation at point of use instead
+- [x] Persist via `ConfigStore`
 
 #### 2. API Client
 HTTP client using Headlamp's `ApiProxy.request()` to reach the in-cluster dot-ai Service.
@@ -145,6 +145,11 @@ Optional Helm chart for deploying plugin with Headlamp.
 6. Distribution — features 11-12 (ArtifactHub + Helm chart)
 
 ## Decision Log
+
+### 2026-03-13: Remove connection test from settings page
+- **Decision**: Remove the "Test Connection" button from the plugin settings page.
+- **Rationale**: Headlamp supports multiple clusters. `ApiProxy.request()` routes to the currently active cluster, but settings are global. A test in settings would only check one cluster and mislead users about dot-ai availability in other clusters. Connection validation will happen at the point of use (API client calls) instead.
+- **Impact**: Feature 1 connection test checkbox marked as deferred (`[~]`). Connection error handling moves to the API client (Feature 2) and individual tool pages.
 
 ### 2026-03-13: In-cluster service discovery via ApiProxy instead of global URL + Bearer token
 - **Decision**: Use Headlamp's `ApiProxy.request()` for all dot-ai API calls instead of direct `fetch()` with a configured MCP URL and Bearer token.
