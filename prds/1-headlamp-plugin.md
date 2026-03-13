@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 1/12 features complete (Foundation phase — Feature 1 done, Feature 2 next)
+**Progress**: 2/12 features complete (Foundation phase — Features 1-2 done, Feature 3 next)
 
 ## Problem Statement
 
@@ -60,10 +60,10 @@ Configure dot-ai Service discovery via `registerPluginSettings()`.
 
 #### 2. API Client
 HTTP client using Headlamp's `ApiProxy.request()` to reach the in-cluster dot-ai Service.
-- [ ] `ApiProxy.request()` routing through K8s API proxy
-- [ ] Timeout handling (30s default, 30min for AI tools)
-- [ ] Error classification (network, auth, server, timeout, service-not-found)
-- [ ] Endpoints: `/api/v1/resources`, `/api/v1/tools/query`, `/api/v1/tools/remediate`, `/api/v1/tools/operate`, `/api/v1/tools/recommend`, `/api/v1/knowledge/ask`, etc.
+- [x] `ApiProxy.request()` routing through K8s API proxy
+- [x] Timeout handling (30s default, 30min for AI tools, 5min for knowledge)
+- [x] Error classification (network, auth, server, timeout, service-not-found)
+- [x] Endpoints: `/api/v1/tools/query`, `/api/v1/tools/remediate`, `/api/v1/tools/operate`, `/api/v1/tools/recommend`, `/api/v1/knowledge/ask`
 
 #### 3. Visualization Renderers
 Port visualization renderers from dot-ai-ui (Tailwind → MUI).
@@ -155,6 +155,11 @@ Optional Helm chart for deploying plugin with Headlamp.
 - **Decision**: Use Headlamp's `ApiProxy.request()` for all dot-ai API calls instead of direct `fetch()` with a configured MCP URL and Bearer token.
 - **Rationale**: dot-ai runs as an in-cluster Service. Users may have multiple clusters in Headlamp — ApiProxy automatically routes to the active cluster's dot-ai instance. Authentication is handled by Kubernetes RBAC, eliminating separate token management.
 - **Impact**: Feature 1 (Settings) reworked to Service name/namespace. Feature 2 (API Client) uses ApiProxy. Bearer token removed from architecture. Plugin auto-detects dot-ai availability per cluster.
+
+### 2026-03-13: Remove data endpoints from API client
+- **Decision**: Remove `/api/v1/resources`, `/api/v1/resources/kinds`, and `/api/v1/namespaces` endpoints from the plugin API client.
+- **Rationale**: Headlamp already provides resource browsing, namespace listing, and K8s API access natively. Duplicating these through dot-ai would overlap with existing Headlamp features. The API client focuses exclusively on AI tool endpoints.
+- **Impact**: Feature 2 (API Client) exposes only the 5 AI tools (Query, Remediate, Operate, Recommend, Knowledge). Resource data comes from Headlamp's built-in K8s APIs.
 
 ## Companion Projects
 

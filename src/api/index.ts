@@ -1,0 +1,38 @@
+export { buildProxyPath, dotAiRequest, DEFAULT_TIMEOUT, AI_TOOL_TIMEOUT } from './client';
+export {
+  queryCluster,
+  analyzeIssue,
+  executeRemediation,
+  operateCluster,
+  executeOperation,
+  recommend,
+  askKnowledge,
+} from './endpoints';
+export type {
+  DotAiErrorType,
+  McpResponse,
+  QueryResult,
+  RemediateAction,
+  ExecutionChoice,
+  ExecutionResult,
+  RemediateResult,
+  CurrentResource,
+  ProposedChange,
+  OperateResult,
+  RecommendStage,
+  Solution,
+  OrganizationalContext,
+  Question,
+  ManifestFile,
+  DeploymentResult,
+  RecommendRefinementResponse,
+  RecommendSolutionsResponse,
+  RecommendQuestionsResponse,
+  RecommendManifestResponse,
+  RecommendDeployResponse,
+  RecommendResult,
+  KnowledgeSource,
+  KnowledgeChunk,
+  KnowledgeResult,
+} from './types';
+export { DotAiError } from './types';
