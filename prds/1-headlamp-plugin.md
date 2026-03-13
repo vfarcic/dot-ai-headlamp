@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 2/12 features complete (Foundation phase — Features 1-2 done, Feature 3 next)
+**Progress**: 3/12 features complete (Features 1-3 done — Query Page + Core Renderers complete, Feature 4 Mermaid Renderer next)
 
 ## Problem Statement
 
@@ -27,9 +27,9 @@ Headlamp Browser UI
 
 ### Authentication
 
-- Handled by Kubernetes RBAC — requests proxy through the K8s API server using the user's existing cluster credentials
-- No separate auth token needed — dot-ai runs as an in-cluster Service
-- Plugin settings configure the Service name/namespace (default: `dot-ai` in `dot-ai` namespace)
+- Requests proxy through the K8s API server using Headlamp's Kubernetes API proxy
+- Static token auth via `X-Dot-AI-Authorization` header (Headlamp backend overwrites standard `Authorization` with K8s token)
+- Plugin settings configure the Service name/namespace/port and optional bearer token
 - Plugin auto-detects per cluster whether dot-ai is available; UI hides/disables in clusters without it
 
 ### Tech Stack
@@ -65,22 +65,25 @@ HTTP client using Headlamp's `ApiProxy.request()` to reach the in-cluster dot-ai
 - [x] Error classification (network, auth, server, timeout, service-not-found)
 - [x] Endpoints: `/api/v1/tools/query`, `/api/v1/tools/remediate`, `/api/v1/tools/operate`, `/api/v1/tools/recommend`, `/api/v1/knowledge/ask`
 
-#### 3. Visualization Renderers
-Port visualization renderers from dot-ai-ui (Tailwind → MUI).
-- [ ] **Mermaid** — Diagrams with zoom/pan/fullscreen (mermaid.js bundled)
-- [ ] **Cards** — Grid layout with MUI Card components, status indicators
-- [ ] **Code** — Syntax-highlighted blocks (Monaco Editor or Prism.js)
-- [ ] **Table** — Data tables with MUI Table, status indicators
-- [ ] **BarChart** — Horizontal/vertical charts via Recharts
-
 ### AI Tool Workflows
 
-#### 4. Query Page
-Natural language cluster analysis.
-- [ ] `registerRoute()` + `registerSidebarEntry()` under "dot-ai" section
-- [ ] Text input for natural language query
-- [ ] Visualization rendering of results
-- [ ] Insights panel
+#### 3. Query Page + Core Renderers
+Natural language cluster analysis — first end-to-end AI workflow. Includes the VisualizationRenderer dispatcher and the three simplest renderers (Cards, Table, Code). Each renderer is validated against real Query results before moving on.
+- [x] `VisualizationRenderer` dispatcher (routes by visualization type)
+- [x] **Cards** renderer — Grid layout with MUI Card components, status indicators
+- [x] **Table** renderer — Data tables with MUI Table, status indicators
+- [x] **Code** renderer — Syntax-highlighted blocks (Monaco Editor)
+- [x] `registerRoute()` + `registerSidebarEntry()` under "dot-ai" section
+- [x] Text input for natural language query
+- [x] Visualization rendering of results
+- [x] Insights panel
+
+#### 4. Mermaid Renderer
+Complex diagram visualization with interactive controls. Split from core renderers due to significantly higher complexity (~450 lines in reference implementation). Enhances Query page results.
+- [ ] Mermaid.js integration (bundled dependency)
+- [ ] Zoom/pan/fullscreen controls
+- [ ] Collapsible subgraphs
+- [ ] Error display with raw content fallback
 
 #### 5. Remediate
 Issue analysis and remediation.
@@ -96,8 +99,9 @@ Day 2 operations (scale, update, rollback, delete).
 - [ ] Two-step workflow: proposed changes → approval → execution
 - [ ] Dry-run validation display
 
-#### 7. Recommend
-Multi-step deployment recommendations.
+#### 7. Recommend + BarChart Renderer
+Multi-step deployment recommendations. Introduces the BarChart renderer for scoring visualizations.
+- [ ] **BarChart** renderer — Horizontal/vertical charts via Recharts
 - [ ] `registerRoute()` + `registerSidebarEntry()`
 - [ ] Multi-step flow: intent → solutions → questions → manifests → deploy
 - [ ] Solution cards with scores
@@ -137,14 +141,20 @@ Optional Helm chart for deploying plugin with Headlamp.
 
 ## Implementation Order
 
-1. Foundation (settings, API client, renderers) — features 1-3
-2. Query page — feature 4 (simplest workflow, proves the full stack end-to-end)
-3. Remediate & Operate — features 5-6 (two-step workflows + resource detail injection)
-4. Recommend — feature 7 (most complex multi-step workflow)
-5. Dashboard enhancements — features 8-10 (knowledge search, resource capabilities, detail sections)
-6. Distribution — features 11-12 (ArtifactHub + Helm chart)
+1. Foundation (settings, API client) — features 1-2
+2. Query page + core renderers — feature 3 (first end-to-end AI workflow with Cards, Table, Code renderers)
+3. Mermaid renderer — feature 4 (complex diagram visualization, enhances Query results)
+4. Remediate & Operate — features 5-6 (two-step workflows + resource detail injection)
+5. Recommend + BarChart — feature 7 (most complex multi-step workflow + chart renderer)
+6. Dashboard enhancements — features 8-10 (knowledge search, resource capabilities, detail sections)
+7. Distribution — features 11-12 (ArtifactHub + Helm chart)
 
 ## Decision Log
+
+### 2026-03-13: Merge renderers into the pages that use them
+- **Decision**: Remove standalone "Visualization Renderers" feature. Distribute renderers across the pages that introduce them: Cards/Table/Code with Query page (Feature 3), Mermaid as its own feature (Feature 4), BarChart with Recommend (Feature 7).
+- **Rationale**: Renderers can't be validated in isolation — they need a page with real data. Building all 5 up front creates a large batch with no feedback loop. Interleaving renderers with pages enables incremental build-validate cycles. Mermaid (~450 lines, collapsible subgraphs, zoom/pan) is complex enough to warrant its own feature.
+- **Impact**: Feature count stays at 12. Old Feature 3 (Renderers) absorbed into Features 3, 4, 7. Old Feature 4 (Query) merged into new Feature 3. Implementation order updated.
 
 ### 2026-03-13: Remove connection test from settings page
 - **Decision**: Remove the "Test Connection" button from the plugin settings page.
@@ -155,6 +165,21 @@ Optional Helm chart for deploying plugin with Headlamp.
 - **Decision**: Use Headlamp's `ApiProxy.request()` for all dot-ai API calls instead of direct `fetch()` with a configured MCP URL and Bearer token.
 - **Rationale**: dot-ai runs as an in-cluster Service. Users may have multiple clusters in Headlamp — ApiProxy automatically routes to the active cluster's dot-ai instance. Authentication is handled by Kubernetes RBAC, eliminating separate token management.
 - **Impact**: Feature 1 (Settings) reworked to Service name/namespace. Feature 2 (API Client) uses ApiProxy. Bearer token removed from architecture. Plugin auto-detects dot-ai availability per cluster.
+
+### 2026-03-14: Port required in K8s API proxy URL
+- **Decision**: Add configurable port to plugin settings and include it in the K8s API proxy path (`services/{name}:{port}/proxy/`).
+- **Rationale**: The Kubernetes API server proxy defaults to port 80 when no port is specified. The dot-ai service runs on port 3456, so requests failed with "no endpoints available" until the port was explicitly included.
+- **Impact**: Feature 1 (Settings) gains a Port field (default: `3456`). Feature 2 (API Client) includes port in proxy path.
+
+### 2026-03-14: X-Dot-AI-Authorization header for auth through K8s proxy
+- **Decision**: Use `X-Dot-AI-Authorization: Bearer <token>` instead of standard `Authorization` header for dot-ai authentication.
+- **Rationale**: The Headlamp backend overwrites the `Authorization` header with the Kubernetes bearer token before proxying to the K8s API server. A custom header survives the proxy chain. Feature request to dot-ai MCP server added support for this fallback header (v1.10.2+).
+- **Impact**: Feature 1 (Settings) gains a Token field. Feature 2 (API Client) sends token via custom header. Architecture section updated to reflect auth approach.
+
+### 2026-03-14: MCP response envelope contains nested tool result
+- **Decision**: Unwrap MCP responses by extracting `data.result` (not just `data`) from the response envelope.
+- **Rationale**: The dot-ai MCP server wraps tool responses as `{ success, data: { tool, result: { ...actual data... } } }`. The API client was stopping at `data` level, returning the wrapper object instead of the tool result.
+- **Impact**: Feature 2 (API Client) updated to check for `result` key in `data` object.
 
 ### 2026-03-13: Remove data endpoints from API client
 - **Decision**: Remove `/api/v1/resources`, `/api/v1/resources/kinds`, and `/api/v1/namespaces` endpoints from the plugin API client.

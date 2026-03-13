@@ -1,6 +1,8 @@
 export interface PluginConfig {
   serviceName?: string;
   namespace?: string;
+  port?: string;
+  token?: string;
 }
 
 // Visualization types (shared with renderers)

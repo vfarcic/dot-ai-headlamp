@@ -4,6 +4,7 @@ import { DotAiError, McpResponse } from './types';
 
 const DEFAULT_SERVICE_NAME = 'dot-ai';
 const DEFAULT_NAMESPACE = 'dot-ai';
+const DEFAULT_PORT = '3456';
 
 export const DEFAULT_TIMEOUT = 30_000;
 export const AI_TOOL_TIMEOUT = 30 * 60_000;
@@ -16,7 +17,8 @@ export function buildProxyPath(endpointPath: string): string {
   const config = pluginStore.get();
   const serviceName = config?.serviceName || DEFAULT_SERVICE_NAME;
   const namespace = config?.namespace || DEFAULT_NAMESPACE;
-  return `/api/v1/namespaces/${namespace}/services/${serviceName}/proxy${endpointPath}`;
+  const port = config?.port || DEFAULT_PORT;
+  return `/api/v1/namespaces/${namespace}/services/${serviceName}:${port}/proxy${endpointPath}`;
 }
 
 /**
@@ -38,9 +40,20 @@ export async function dotAiRequest<T>(
     autoLogoutOnAuthError: false,
   };
 
+  const config = pluginStore.get();
+  const headers: Record<string, string> = {};
+
+  if (config?.token) {
+    headers['X-Dot-AI-Authorization'] = `Bearer ${config.token}`;
+  }
+
   if (options?.body !== undefined) {
     params.body = JSON.stringify(options.body);
-    params.headers = { 'Content-Type': 'application/json' };
+    headers['Content-Type'] = 'application/json';
+  }
+
+  if (Object.keys(headers).length > 0) {
+    params.headers = headers;
   }
 
   let raw: McpResponse<T>;
@@ -65,6 +78,12 @@ export async function dotAiRequest<T>(
       'server',
       raw.error.code
     );
+  }
+
+  // MCP tool responses are wrapped as { success, data: { tool, result } }
+  const data = raw.data as Record<string, unknown> | undefined;
+  if (data && 'result' in data) {
+    return data.result as T;
   }
 
   return (raw.data ?? raw) as T;
