@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 1/12 features complete (Foundation phase)
+**Progress**: 0/12 features complete (Foundation phase — Feature 1 rework needed)
 
 ## Problem Statement
 
@@ -10,15 +10,15 @@ Users of DevOps AI Toolkit (dot-ai) currently need a separate standalone web UI 
 
 ## Proposed Solution
 
-A Headlamp plugin that brings dot-ai's AI-powered Kubernetes capabilities into the Headlamp dashboard. The plugin communicates with the dot-ai MCP server via HTTP REST endpoints, configured through plugin settings.
+A Headlamp plugin that brings dot-ai's AI-powered Kubernetes capabilities into the Headlamp dashboard. The plugin communicates with the dot-ai MCP server running in-cluster via Headlamp's Kubernetes API proxy (`ApiProxy.request()`). Authentication is handled by Kubernetes RBAC through the user's existing cluster credentials.
 
 ## Architecture
 
 ```
 Headlamp Browser UI
 ├── dot-ai plugin
-│   ├── Settings (MCP URL + auth token)
-│   ├── API Client (fetch → dot-ai MCP server)
+│   ├── Settings (Service name/namespace)
+│   ├── API Client (ApiProxy.request() → K8s API → dot-ai Service)
 │   ├── Sidebar entries (Query, Remediate, Operate, Recommend)
 │   ├── Custom routes/pages
 │   ├── Resource detail sections (injected via registerDetailsViewSection)
@@ -27,9 +27,10 @@ Headlamp Browser UI
 
 ### Authentication
 
-- Plugin settings page for MCP server URL + Bearer token (`registerPluginSettings()` + `ConfigStore`)
-- All API calls include stored Bearer token
-- Future: K8s service proxy option for in-cluster deployments
+- Handled by Kubernetes RBAC — requests proxy through the K8s API server using the user's existing cluster credentials
+- No separate auth token needed — dot-ai runs as an in-cluster Service
+- Plugin settings configure the Service name/namespace (default: `dot-ai` in `dot-ai` namespace)
+- Plugin auto-detects per cluster whether dot-ai is available; UI hides/disables in clusters without it
 
 ### Tech Stack
 
@@ -50,18 +51,18 @@ Headlamp Browser UI
 
 ### Foundation
 
-#### 1. Plugin Settings Page ✅
-Configure MCP server URL and auth token via `registerPluginSettings()`.
-- [x] Text input for MCP server URL
-- [x] Password input for Bearer token
-- [x] Connection test button
-- [x] Persist via `ConfigStore`
+#### 1. Plugin Settings Page
+Configure dot-ai Service discovery via `registerPluginSettings()`.
+- [ ] Text input for Service name (default: `dot-ai`)
+- [ ] Text input for namespace (default: `dot-ai`)
+- [ ] Connection test button (via `ApiProxy.request()`)
+- [ ] Persist via `ConfigStore`
 
 #### 2. API Client
-HTTP client for dot-ai MCP REST endpoints.
-- [ ] Bearer token auth from plugin settings
+HTTP client using Headlamp's `ApiProxy.request()` to reach the in-cluster dot-ai Service.
+- [ ] `ApiProxy.request()` routing through K8s API proxy
 - [ ] Timeout handling (30s default, 30min for AI tools)
-- [ ] Error classification (network, auth, server, timeout)
+- [ ] Error classification (network, auth, server, timeout, service-not-found)
 - [ ] Endpoints: `/api/v1/resources`, `/api/v1/tools/query`, `/api/v1/tools/remediate`, `/api/v1/tools/operate`, `/api/v1/tools/recommend`, `/api/v1/knowledge/ask`, etc.
 
 #### 3. Visualization Renderers
@@ -132,7 +133,7 @@ Package for Headlamp's Plugin Catalog.
 #### 12. Helm Chart Integration
 Optional Helm chart for deploying plugin with Headlamp.
 - [ ] ConfigMap for plugin artifacts
-- [ ] Values for MCP server URL/token
+- [ ] Values for dot-ai Service name/namespace
 
 ## Implementation Order
 
@@ -142,6 +143,13 @@ Optional Helm chart for deploying plugin with Headlamp.
 4. Recommend — feature 7 (most complex multi-step workflow)
 5. Dashboard enhancements — features 8-10 (knowledge search, resource capabilities, detail sections)
 6. Distribution — features 11-12 (ArtifactHub + Helm chart)
+
+## Decision Log
+
+### 2026-03-13: In-cluster service discovery via ApiProxy instead of global URL + Bearer token
+- **Decision**: Use Headlamp's `ApiProxy.request()` for all dot-ai API calls instead of direct `fetch()` with a configured MCP URL and Bearer token.
+- **Rationale**: dot-ai runs as an in-cluster Service. Users may have multiple clusters in Headlamp — ApiProxy automatically routes to the active cluster's dot-ai instance. Authentication is handled by Kubernetes RBAC, eliminating separate token management.
+- **Impact**: Feature 1 (Settings) reworked to Service name/namespace. Feature 2 (API Client) uses ApiProxy. Bearer token removed from architecture. Plugin auto-detects dot-ai availability per cluster.
 
 ## Companion Projects
 

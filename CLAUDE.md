@@ -24,7 +24,7 @@ npm run package     # Create distributable .tar.gz
 
 ## MCP Integration
 
-This plugin communicates with the dot-ai MCP server via **HTTP REST endpoints** (e.g., `/api/v1/resources`, `/api/v1/events`, `/api/v1/tools/query`). Authentication is configured via plugin settings (MCP server URL + Bearer token).
+This plugin communicates with the in-cluster dot-ai MCP server via **`ApiProxy.request()`** through the Kubernetes API proxy. Authentication is handled by Kubernetes RBAC — no separate token needed. Plugin settings configure the Service name/namespace (default: `dot-ai` in `dot-ai` namespace).
 
 ## Key Headlamp APIs
 
@@ -45,7 +45,7 @@ src/
 ├── components/        # React components
 │   └── renderers/     # Visualization renderers (Mermaid, Cards, Code, Table, BarChart)
 ├── pages/             # Route pages (Query, Remediate, Operate, Recommend)
-├── settings/          # Plugin settings (MCP URL, auth token)
+├── settings/          # Plugin settings (Service name/namespace)
 └── types/             # TypeScript types
 ```
 
