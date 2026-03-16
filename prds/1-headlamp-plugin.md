@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 6/12 features complete (Features 1-6 done, BarChart renderer from Feature 7 done early — Feature 7 Recommend next)
+**Progress**: 7/12 features complete (Features 1-7 done — Feature 8 Knowledge Base Search next)
 
 ## Problem Statement
 
@@ -102,11 +102,11 @@ Day 2 operations (scale, update, rollback, delete).
 #### 7. Recommend + BarChart Renderer
 Multi-step deployment recommendations. Introduces the BarChart renderer for scoring visualizations.
 - [x] **BarChart** renderer — Horizontal/vertical progress-bar charts via MUI Box components
-- [ ] `registerRoute()` + `registerSidebarEntry()`
-- [ ] Multi-step flow: intent → solutions → questions → manifests → deploy
-- [ ] Solution cards with scores
-- [ ] YAML manifest preview
-- [ ] Deploy button with results
+- [x] `registerRoute()` + `registerSidebarEntry()`
+- [x] Multi-step flow: intent → solutions → questions → manifests → deploy
+- [x] Solution cards with scores
+- [x] YAML manifest preview
+- [x] Deploy button with results
 
 ### Dashboard Enhancements
 

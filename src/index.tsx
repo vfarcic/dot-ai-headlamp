@@ -11,6 +11,7 @@ import OperateDetailSection from './components/OperateDetailSection';
 import RemediateDetailSection from './components/RemediateDetailSection';
 import OperatePage from './pages/OperatePage';
 import QueryPage from './pages/QueryPage';
+import RecommendPage from './pages/RecommendPage';
 import RemediatePage from './pages/RemediatePage';
 import { Settings } from './settings';
 import { PLUGIN_NAME } from './settings/pluginConfig';
@@ -54,6 +55,15 @@ registerSidebarEntry({
   icon: 'mdi:play-circle-outline',
 });
 
+registerSidebarEntry({
+  parent: 'dot-ai',
+  name: 'dot-ai-recommend',
+  label: 'Recommend',
+  url: '/dot-ai/recommend',
+  useClusterURL: true,
+  icon: 'mdi:lightbulb-outline',
+});
+
 // Routes
 
 registerRoute({
@@ -78,6 +88,14 @@ registerRoute({
   name: 'dot-ai-operate',
   exact: true,
   component: OperatePage,
+});
+
+registerRoute({
+  path: '/dot-ai/recommend',
+  sidebar: 'dot-ai-recommend',
+  name: 'dot-ai-recommend',
+  exact: true,
+  component: RecommendPage,
 });
 
 // Detail view sections
