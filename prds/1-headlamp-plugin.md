@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 3/12 features complete (Features 1-3 done — Query Page + Core Renderers complete, Feature 4 Mermaid Renderer next)
+**Progress**: 4/12 features complete (Features 1-4 done — Query Page + Core Renderers + Mermaid Renderer complete, Feature 5 Remediate next)
 
 ## Problem Statement
 
@@ -36,7 +36,7 @@ Headlamp Browser UI
 
 - React + TypeScript (Headlamp requirement)
 - MUI components (shared Headlamp dependency — replaces Tailwind from dot-ai-ui)
-- Mermaid.js (bundled with plugin)
+- Mermaid.js (loaded from CDN at runtime)
 - Recharts (shared Headlamp dependency — replaces custom BarChartRenderer)
 - Monaco Editor (shared Headlamp dependency — alternative to Prism.js)
 
@@ -80,10 +80,10 @@ Natural language cluster analysis — first end-to-end AI workflow. Includes the
 
 #### 4. Mermaid Renderer
 Complex diagram visualization with interactive controls. Split from core renderers due to significantly higher complexity (~450 lines in reference implementation). Enhances Query page results.
-- [ ] Mermaid.js integration (bundled dependency)
-- [ ] Zoom/pan/fullscreen controls
-- [ ] Collapsible subgraphs
-- [ ] Error display with raw content fallback
+- [x] Mermaid.js integration (loaded from CDN at runtime)
+- [x] Zoom/pan/fullscreen controls
+- [x] Collapsible subgraphs
+- [x] Error display with raw content fallback
 
 #### 5. Remediate
 Issue analysis and remediation.
@@ -180,6 +180,11 @@ Optional Helm chart for deploying plugin with Headlamp.
 - **Decision**: Unwrap MCP responses by extracting `data.result` (not just `data`) from the response envelope.
 - **Rationale**: The dot-ai MCP server wraps tool responses as `{ success, data: { tool, result: { ...actual data... } } }`. The API client was stopping at `data` level, returning the wrapper object instead of the tool result.
 - **Impact**: Feature 2 (API Client) updated to check for `result` key in `data` object.
+
+### 2026-03-16: Mermaid.js loaded from CDN instead of bundled
+- **Decision**: Load Mermaid.js from jsDelivr CDN at runtime via `<script>` tag instead of bundling as an npm dependency.
+- **Rationale**: Bundling mermaid (~16MB) into the plugin's UMD bundle crashed Headlamp's plugin loader. Headlamp plugins must stay small since they're loaded synchronously at startup. CDN loading defers the heavy library to first use and keeps the plugin bundle at ~26KB.
+- **Impact**: Feature 4 (Mermaid Renderer) uses `loadMermaid()` singleton that injects a script tag on first render. No `mermaid` npm dependency. Requires internet access for diagram rendering.
 
 ### 2026-03-13: Remove data endpoints from API client
 - **Decision**: Remove `/api/v1/resources`, `/api/v1/resources/kinds`, and `/api/v1/namespaces` endpoints from the plugin API client.

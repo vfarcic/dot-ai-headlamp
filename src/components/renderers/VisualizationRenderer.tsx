@@ -3,6 +3,7 @@ import React from 'react';
 import { Visualization } from '../../types';
 import CardsRenderer from './CardsRenderer';
 import CodeRenderer from './CodeRenderer';
+import MermaidRenderer from './MermaidRenderer';
 import TableRenderer from './TableRenderer';
 
 interface VisualizationRendererProps {
@@ -18,6 +19,7 @@ export default function VisualizationRenderer({ visualization }: VisualizationRe
     case 'code':
       return <CodeRenderer content={visualization.content} />;
     case 'mermaid':
+      return <MermaidRenderer content={visualization.content} />;
     case 'bar-chart':
       return (
         <Typography color="text.secondary" sx={{ py: 2 }}>
