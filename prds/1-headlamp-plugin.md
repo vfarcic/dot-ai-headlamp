@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 4/12 features complete (Features 1-4 done, BarChart renderer from Feature 7 done early — Feature 5 Remediate next)
+**Progress**: 5/12 features complete (Features 1-5 done, BarChart renderer from Feature 7 done early — Feature 6 Operate next)
 
 ## Problem Statement
 
@@ -87,10 +87,10 @@ Complex diagram visualization with interactive controls. Split from core rendere
 
 #### 5. Remediate
 Issue analysis and remediation.
-- [ ] Standalone page via `registerRoute()`
-- [ ] Injected into resource detail pages via `registerDetailsViewSection()`
-- [ ] Two-step workflow: analysis → execution choice
-- [ ] Action buttons for remediation options
+- [x] Standalone page via `registerRoute()`
+- [x] Injected into resource detail pages via `registerDetailsViewSection()`
+- [x] Two-step workflow: analysis → execution choice
+- [x] Action buttons for remediation options
 
 #### 6. Operate
 Day 2 operations (scale, update, rollback, delete).

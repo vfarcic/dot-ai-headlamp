@@ -1,9 +1,21 @@
-import { registerPluginSettings, registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
+import {
+  DetailsViewSectionProps,
+  registerDetailsViewSection,
+  registerPluginSettings,
+  registerRoute,
+  registerSidebarEntry,
+} from '@kinvolk/headlamp-plugin/lib';
+import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
+import React from 'react';
+import RemediateDetailSection from './components/RemediateDetailSection';
 import QueryPage from './pages/QueryPage';
+import RemediatePage from './pages/RemediatePage';
 import { Settings } from './settings';
 import { PLUGIN_NAME } from './settings/pluginConfig';
 
 registerPluginSettings(PLUGIN_NAME, Settings);
+
+// Sidebar
 
 registerSidebarEntry({
   parent: null,
@@ -22,10 +34,41 @@ registerSidebarEntry({
   icon: 'mdi:magnify',
 });
 
+registerSidebarEntry({
+  parent: 'dot-ai',
+  name: 'dot-ai-remediate',
+  label: 'Remediate',
+  url: '/dot-ai/remediate',
+  useClusterURL: true,
+  icon: 'mdi:wrench',
+});
+
+// Routes
+
 registerRoute({
   path: '/dot-ai/query',
   sidebar: 'dot-ai-query',
   name: 'dot-ai-query',
   exact: true,
   component: QueryPage,
+});
+
+registerRoute({
+  path: '/dot-ai/remediate',
+  sidebar: 'dot-ai-remediate',
+  name: 'dot-ai-remediate',
+  exact: true,
+  component: RemediatePage,
+});
+
+// Detail view sections
+
+registerDetailsViewSection(({ resource }: DetailsViewSectionProps) => {
+  if (!resource) return null;
+
+  return (
+    <SectionBox title="dot-ai Remediate">
+      <RemediateDetailSection resource={resource} />
+    </SectionBox>
+  );
 });
