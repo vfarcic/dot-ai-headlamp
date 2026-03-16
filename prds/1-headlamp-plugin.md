@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 5/12 features complete (Features 1-5 done, BarChart renderer from Feature 7 done early — Feature 6 Operate next)
+**Progress**: 6/12 features complete (Features 1-6 done, BarChart renderer from Feature 7 done early — Feature 7 Recommend next)
 
 ## Problem Statement
 
@@ -94,10 +94,10 @@ Issue analysis and remediation.
 
 #### 6. Operate
 Day 2 operations (scale, update, rollback, delete).
-- [ ] Standalone page via `registerRoute()`
-- [ ] Injected into resource detail pages via `registerDetailsViewSection()`
-- [ ] Two-step workflow: proposed changes → approval → execution
-- [ ] Dry-run validation display
+- [x] Standalone page via `registerRoute()`
+- [x] Injected into resource detail pages via `registerDetailsViewSection()`
+- [x] Two-step workflow: proposed changes → approval → execution
+- [x] Dry-run validation display
 
 #### 7. Recommend + BarChart Renderer
 Multi-step deployment recommendations. Introduces the BarChart renderer for scoring visualizations.

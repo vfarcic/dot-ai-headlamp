@@ -7,7 +7,9 @@ import {
 } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
+import OperateDetailSection from './components/OperateDetailSection';
 import RemediateDetailSection from './components/RemediateDetailSection';
+import OperatePage from './pages/OperatePage';
 import QueryPage from './pages/QueryPage';
 import RemediatePage from './pages/RemediatePage';
 import { Settings } from './settings';
@@ -43,6 +45,15 @@ registerSidebarEntry({
   icon: 'mdi:wrench',
 });
 
+registerSidebarEntry({
+  parent: 'dot-ai',
+  name: 'dot-ai-operate',
+  label: 'Operate',
+  url: '/dot-ai/operate',
+  useClusterURL: true,
+  icon: 'mdi:play-circle-outline',
+});
+
 // Routes
 
 registerRoute({
@@ -61,6 +72,14 @@ registerRoute({
   component: RemediatePage,
 });
 
+registerRoute({
+  path: '/dot-ai/operate',
+  sidebar: 'dot-ai-operate',
+  name: 'dot-ai-operate',
+  exact: true,
+  component: OperatePage,
+});
+
 // Detail view sections
 
 registerDetailsViewSection(({ resource }: DetailsViewSectionProps) => {
@@ -69,6 +88,16 @@ registerDetailsViewSection(({ resource }: DetailsViewSectionProps) => {
   return (
     <SectionBox title="dot-ai Remediate">
       <RemediateDetailSection resource={resource} />
+    </SectionBox>
+  );
+});
+
+registerDetailsViewSection(({ resource }: DetailsViewSectionProps) => {
+  if (!resource) return null;
+
+  return (
+    <SectionBox title="dot-ai Operate">
+      <OperateDetailSection resource={resource} />
     </SectionBox>
   );
 });
