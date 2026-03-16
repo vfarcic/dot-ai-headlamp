@@ -22,6 +22,16 @@ npm run test        # Run tests
 npm run package     # Create distributable .tar.gz
 ```
 
+### Deploying to local Headlamp
+
+After `npm run build`, you must copy the built plugin to Headlamp's plugins directory for changes to take effect:
+
+```bash
+cp dist/main.js ~/Library/Application\ Support/Headlamp/plugins/dot-ai/main.js
+```
+
+Then restart Headlamp. The build alone does NOT update the running plugin — this copy step is required.
+
 ## MCP Integration
 
 This plugin communicates with the in-cluster dot-ai MCP server via **`ApiProxy.request()`** through the Kubernetes API proxy. Authentication is handled by Kubernetes RBAC — no separate token needed. Plugin settings configure the Service name/namespace (default: `dot-ai` in `dot-ai` namespace).

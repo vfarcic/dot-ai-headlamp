@@ -26,21 +26,21 @@ describe('buildProxyPath', () => {
   it('uses defaults when config is null', () => {
     mockGet.mockReturnValue(null);
     expect(buildProxyPath('/api/v1/tools')).toBe(
-      '/api/v1/namespaces/dot-ai/services/dot-ai/proxy/api/v1/tools'
+      '/api/v1/namespaces/dot-ai/services/dot-ai:3456/proxy/api/v1/tools'
     );
   });
 
   it('uses defaults when config has empty values', () => {
     mockGet.mockReturnValue({ serviceName: '', namespace: '' });
     expect(buildProxyPath('/api/v1/tools')).toBe(
-      '/api/v1/namespaces/dot-ai/services/dot-ai/proxy/api/v1/tools'
+      '/api/v1/namespaces/dot-ai/services/dot-ai:3456/proxy/api/v1/tools'
     );
   });
 
   it('uses custom config values', () => {
     mockGet.mockReturnValue({ serviceName: 'my-svc', namespace: 'custom-ns' });
     expect(buildProxyPath('/api/v1/tools')).toBe(
-      '/api/v1/namespaces/custom-ns/services/my-svc/proxy/api/v1/tools'
+      '/api/v1/namespaces/custom-ns/services/my-svc:3456/proxy/api/v1/tools'
     );
   });
 });
@@ -52,7 +52,7 @@ describe('dotAiRequest', () => {
     const result = await dotAiRequest('/api/v1/resources');
 
     expect(mockRequest).toHaveBeenCalledWith(
-      '/api/v1/namespaces/dot-ai/services/dot-ai/proxy/api/v1/resources',
+      '/api/v1/namespaces/dot-ai/services/dot-ai:3456/proxy/api/v1/resources',
       expect.objectContaining({
         method: 'GET',
         timeout: DEFAULT_TIMEOUT,

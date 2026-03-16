@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 4/12 features complete (Features 1-4 done — Query Page + Core Renderers + Mermaid Renderer complete, Feature 5 Remediate next)
+**Progress**: 4/12 features complete (Features 1-4 done, BarChart renderer from Feature 7 done early — Feature 5 Remediate next)
 
 ## Problem Statement
 
@@ -37,7 +37,7 @@ Headlamp Browser UI
 - React + TypeScript (Headlamp requirement)
 - MUI components (shared Headlamp dependency — replaces Tailwind from dot-ai-ui)
 - Mermaid.js (loaded from CDN at runtime)
-- Recharts (shared Headlamp dependency — replaces custom BarChartRenderer)
+- Recharts (shared Headlamp dependency — available but unused so far)
 - Monaco Editor (shared Headlamp dependency — alternative to Prism.js)
 
 ## Development Setup
@@ -101,7 +101,7 @@ Day 2 operations (scale, update, rollback, delete).
 
 #### 7. Recommend + BarChart Renderer
 Multi-step deployment recommendations. Introduces the BarChart renderer for scoring visualizations.
-- [ ] **BarChart** renderer — Horizontal/vertical charts via Recharts
+- [x] **BarChart** renderer — Horizontal/vertical progress-bar charts via MUI Box components
 - [ ] `registerRoute()` + `registerSidebarEntry()`
 - [ ] Multi-step flow: intent → solutions → questions → manifests → deploy
 - [ ] Solution cards with scores
@@ -185,6 +185,11 @@ Optional Helm chart for deploying plugin with Headlamp.
 - **Decision**: Load Mermaid.js from jsDelivr CDN at runtime via `<script>` tag instead of bundling as an npm dependency.
 - **Rationale**: Bundling mermaid (~16MB) into the plugin's UMD bundle crashed Headlamp's plugin loader. Headlamp plugins must stay small since they're loaded synchronously at startup. CDN loading defers the heavy library to first use and keeps the plugin bundle at ~26KB.
 - **Impact**: Feature 4 (Mermaid Renderer) uses `loadMermaid()` singleton that injects a script tag on first render. No `mermaid` npm dependency. Requires internet access for diagram rendering.
+
+### 2026-03-16: MUI Box bars instead of Recharts for BarChart renderer
+- **Decision**: Implement BarChart renderer using MUI Box progress-bar style layout instead of Recharts axis-based charts.
+- **Rationale**: The data model (`label`, `value`, `max`, `status`) maps naturally to progress bars. All other renderers use MUI only — Recharts would be the sole outlier. The reference dot-ai-ui implementation uses a similar progress-bar pattern. Keeps the plugin bundle small.
+- **Impact**: Feature 7 BarChart checkbox complete. Recharts remains available but unused. Tech Stack description updated.
 
 ### 2026-03-13: Remove data endpoints from API client
 - **Decision**: Remove `/api/v1/resources`, `/api/v1/resources/kinds`, and `/api/v1/namespaces` endpoints from the plugin API client.

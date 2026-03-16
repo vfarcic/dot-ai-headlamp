@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import { Visualization } from '../../types';
+import BarChartRenderer from './BarChartRenderer';
 import CardsRenderer from './CardsRenderer';
 import CodeRenderer from './CodeRenderer';
 import MermaidRenderer from './MermaidRenderer';
@@ -21,11 +22,7 @@ export default function VisualizationRenderer({ visualization }: VisualizationRe
     case 'mermaid':
       return <MermaidRenderer content={visualization.content} />;
     case 'bar-chart':
-      return (
-        <Typography color="text.secondary" sx={{ py: 2 }}>
-          {visualization.type} visualization is not yet supported.
-        </Typography>
-      );
+      return <BarChartRenderer content={visualization.content} />;
     default:
       return (
         <Typography color="text.secondary" sx={{ py: 2 }}>
