@@ -53,6 +53,7 @@ jobs:
           sed -i "s|^version:.*|version: \"$VERSION\"|" artifacthub-pkg.yml
           sed -i "s|headlamp/plugin/archive-url:.*|headlamp/plugin/archive-url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dot-ai-$VERSION.tar.gz|" artifacthub-pkg.yml
           sed -i "s|headlamp/plugin/archive-checksum:.*|headlamp/plugin/archive-checksum: \"SHA256:$CHECKSUM\"|" artifacthub-pkg.yml
+          sed -i "s|^createdAt:.*|createdAt: \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"|" artifacthub-pkg.yml
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

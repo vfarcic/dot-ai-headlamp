@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 8/10 features complete (Features 1-8 done — Feature 11 ArtifactHub Publishing next)
+**Progress**: 9/9 features complete (Features 1-8, 11 done — Feature 12 removed)
 
 ## Problem Statement
 
@@ -131,12 +131,11 @@ Removed: Features 5 (Remediate) and 6 (Operate) already inject into resource det
 Package for Headlamp's Plugin Catalog.
 - [x] `npm run package` produces `.tar.gz`
 - [x] ArtifactHub metadata
-- [ ] One-click install from Headlamp UI
+- [x] One-click install from Headlamp UI
 
-#### 12. Helm Chart Integration
-Optional Helm chart for deploying plugin with Headlamp.
-- [ ] ConfigMap for plugin artifacts
-- [ ] Values for dot-ai Service name/namespace
+#### ~~12. Helm Chart Integration~~ (Removed)
+~~Optional Helm chart for deploying plugin with Headlamp.~~
+Removed: ArtifactHub catalog provides one-click install for all Headlamp distributions (in-cluster, web, Docker Desktop, desktop). A separate Helm chart adds maintenance burden without covering additional deployment scenarios.
 
 ## Implementation Order
 
@@ -146,7 +145,7 @@ Optional Helm chart for deploying plugin with Headlamp.
 4. Remediate & Operate — features 5-6 (two-step workflows + resource detail injection)
 5. Recommend + BarChart — feature 7 (most complex multi-step workflow + chart renderer)
 6. Dashboard enhancements — feature 8 (knowledge search)
-7. Distribution — features 11-12 (ArtifactHub + Helm chart)
+7. Distribution — feature 11 (ArtifactHub publishing)
 
 ## Decision Log
 
