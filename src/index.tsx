@@ -1,5 +1,6 @@
 import {
   DetailsViewSectionProps,
+  registerAppBarAction,
   registerDetailsViewSection,
   registerPluginSettings,
   registerRoute,
@@ -7,8 +8,10 @@ import {
 } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import React from 'react';
+import KnowledgeSearchAction from './components/KnowledgeSearchAction';
 import OperateDetailSection from './components/OperateDetailSection';
 import RemediateDetailSection from './components/RemediateDetailSection';
+import KnowledgePage from './pages/KnowledgePage';
 import OperatePage from './pages/OperatePage';
 import QueryPage from './pages/QueryPage';
 import RecommendPage from './pages/RecommendPage';
@@ -64,6 +67,15 @@ registerSidebarEntry({
   icon: 'mdi:lightbulb-outline',
 });
 
+registerSidebarEntry({
+  parent: 'dot-ai',
+  name: 'dot-ai-knowledge',
+  label: 'Knowledge',
+  url: '/dot-ai/knowledge',
+  useClusterURL: true,
+  icon: 'mdi:book-open-page-variant',
+});
+
 // Routes
 
 registerRoute({
@@ -97,6 +109,18 @@ registerRoute({
   exact: true,
   component: RecommendPage,
 });
+
+registerRoute({
+  path: '/dot-ai/knowledge',
+  sidebar: 'dot-ai-knowledge',
+  name: 'dot-ai-knowledge',
+  exact: true,
+  component: KnowledgePage,
+});
+
+// App bar actions
+
+registerAppBarAction(KnowledgeSearchAction);
 
 // Detail view sections
 

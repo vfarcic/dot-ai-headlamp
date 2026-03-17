@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 7/12 features complete (Features 1-7 done — Feature 8 Knowledge Base Search next)
+**Progress**: 8/12 features complete (Features 1-8 done — Feature 9 Resource Capabilities next)
 
 ## Problem Statement
 
@@ -19,10 +19,11 @@ Headlamp Browser UI
 ├── dot-ai plugin
 │   ├── Settings (Service name/namespace)
 │   ├── API Client (ApiProxy.request() → K8s API → dot-ai Service)
-│   ├── Sidebar entries (Query, Remediate, Operate, Recommend)
+│   ├── Sidebar entries (Query, Remediate, Operate, Recommend, Knowledge)
 │   ├── Custom routes/pages
 │   ├── Resource detail sections (injected via registerDetailsViewSection)
-│   └── Visualization renderers (Mermaid, Cards, Code, Table, BarChart)
+│   ├── App bar actions (Knowledge search widget)
+│   └── Visualization renderers (Mermaid, Cards, Code, Table, BarChart, Markdown)
 ```
 
 ### Authentication
@@ -112,9 +113,9 @@ Multi-step deployment recommendations. Introduces the BarChart renderer for scor
 
 #### 8. Knowledge Base Search
 Organizational knowledge queries.
-- [ ] `registerAppBarAction()` search widget
-- [ ] Search input with results dropdown
-- [ ] Links to full results page
+- [x] `registerAppBarAction()` search widget
+- [x] Search input with results dropdown
+- [x] Full results page with markdown rendering, sources, and collapsible chunks
 
 #### 9. Resource Capabilities
 Enrich Headlamp's resource tables with dot-ai capability data.
@@ -190,6 +191,16 @@ Optional Helm chart for deploying plugin with Headlamp.
 - **Decision**: Implement BarChart renderer using MUI Box progress-bar style layout instead of Recharts axis-based charts.
 - **Rationale**: The data model (`label`, `value`, `max`, `status`) maps naturally to progress bars. All other renderers use MUI only — Recharts would be the sole outlier. The reference dot-ai-ui implementation uses a similar progress-bar pattern. Keeps the plugin bundle small.
 - **Impact**: Feature 7 BarChart checkbox complete. Recharts remains available but unused. Tech Stack description updated.
+
+### 2026-03-17: Use @iconify/react instead of @mui/icons-material
+- **Decision**: Use `@iconify/react` `Icon` component for icons in plugin components instead of `@mui/icons-material`.
+- **Rationale**: `@mui/icons-material` is not in Headlamp's shared externals list (`vite.config.mjs`). Importing from it bundles the module, which crashes the plugin at runtime — the entire dot-ai sidebar disappears. `@iconify/react` is a shared external and works correctly.
+- **Impact**: Feature 8 (Knowledge Search) uses `<Icon icon="mdi:magnify" />`. All future icon usage must follow this pattern.
+
+### 2026-03-17: react-markdown for Knowledge answer rendering
+- **Decision**: Bundle `react-markdown` for rendering Knowledge Base answers as formatted markdown.
+- **Rationale**: Knowledge API responses contain full markdown (headings, code blocks, lists, tables). Plain text rendering was unreadable. `react-markdown` is already a transitive dependency in node_modules. Bundle size increases from ~67KB to ~186KB, which is acceptable for a plugin.
+- **Impact**: Feature 8 gains `MarkdownRenderer` component. Bundle size increase is a one-time cost shared by any future markdown needs.
 
 ### 2026-03-13: Remove data endpoints from API client
 - **Decision**: Remove `/api/v1/resources`, `/api/v1/resources/kinds`, and `/api/v1/namespaces` endpoints from the plugin API client.
