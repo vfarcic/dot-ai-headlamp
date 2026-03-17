@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Package
+        run: npm run package
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Find tarball
+        id: tarball
+        run: |
+          TARBALL=$(ls dot-ai-*.tar.gz)
+          echo "FILE=$TARBALL" >> "$GITHUB_OUTPUT"
+
+      - name: Compute checksum
+        id: checksum
+        run: |
+          CHECKSUM=$(sha256sum "${{ steps.tarball.outputs.FILE }}" | awk '{print $1}')
+          echo "SHA256=$CHECKSUM" >> "$GITHUB_OUTPUT"
+
+      - name: Update artifacthub-pkg.yml
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          CHECKSUM="${{ steps.checksum.outputs.SHA256 }}"
+          sed -i "s|^version:.*|version: \"$VERSION\"|" artifacthub-pkg.yml
+          sed -i "s|headlamp/plugin/archive-url:.*|headlamp/plugin/archive-url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dot-ai-$VERSION.tar.gz|" artifacthub-pkg.yml
+          sed -i "s|headlamp/plugin/archive-checksum:.*|headlamp/plugin/archive-checksum: \"SHA256:$CHECKSUM\"|" artifacthub-pkg.yml
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.tarball.outputs.FILE }}
+          generate_release_notes: true
+
+      - name: Commit updated artifacthub-pkg.yml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          git add artifacthub-pkg.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: update artifacthub-pkg.yml for ${{ github.ref_name }}"
+          git push origin main

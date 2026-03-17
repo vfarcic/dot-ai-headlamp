@@ -2,4 +2,8 @@ node_modules/
 dist/
 .headlamp-plugin/
 *.tgz
+*.tar.gz
 /.env
+.eslintcache
+gke_gcloud_auth_plugin_cache
+kubeconfig.yaml

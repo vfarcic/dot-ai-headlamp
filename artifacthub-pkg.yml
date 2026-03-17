@@ -1,0 +1,12 @@
+version: "0.1.0"
+name: headlamp_dot_ai
+displayName: dot-ai
+createdAt: "2026-03-17T00:00:00Z"
+description: "Headlamp plugin for DevOps AI Toolkit (dot-ai) - AI-powered Kubernetes operations"
+license: MIT
+homeURL: https://devopstoolkit.ai
+annotations:
+  headlamp/plugin/archive-url: https://github.com/vfarcic/dot-ai-headlamp/releases/download/v0.1.0/dot-ai-0.1.0.tar.gz
+  headlamp/plugin/archive-checksum: "SHA256:placeholder"
+  headlamp/plugin/version-compat: ">=0.22"
+  headlamp/plugin/distro-compat: in-cluster,web,docker-desktop,desktop

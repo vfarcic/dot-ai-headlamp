@@ -2,7 +2,7 @@
 
 **Issue**: #1
 **Status**: In Progress
-**Progress**: 8/12 features complete (Features 1-8 done — Feature 9 Resource Capabilities next)
+**Progress**: 8/10 features complete (Features 1-8 done — Feature 11 ArtifactHub Publishing next)
 
 ## Problem Statement
 
@@ -117,22 +117,20 @@ Organizational knowledge queries.
 - [x] Search input with results dropdown
 - [x] Full results page with markdown rendering, sources, and collapsible chunks
 
-#### 9. Resource Capabilities
-Enrich Headlamp's resource tables with dot-ai capability data.
-- [ ] `registerResourceTableColumnsProcessor()` to add printer columns
-- [ ] Capability descriptions and use cases
+#### ~~9. Resource Capabilities~~ (Removed)
+~~Enrich Headlamp's resource tables with dot-ai capability data.~~
+Removed: Headlamp's existing resource tables are sufficient. Capability data adds complexity without clear user value.
 
-#### 10. Resource Detail AI Section
-Unified "dot-ai" section on any resource detail page.
-- [ ] `registerDetailsViewSection()` with quick action buttons
-- [ ] Query, Remediate, Operate actions pre-filled with resource context
+#### ~~10. Resource Detail AI Section~~ (Removed)
+~~Unified "dot-ai" section on any resource detail page.~~
+Removed: Features 5 (Remediate) and 6 (Operate) already inject into resource detail pages via `registerDetailsViewSection()`. A separate unified section would duplicate existing functionality.
 
 ### Distribution
 
 #### 11. ArtifactHub Publishing
 Package for Headlamp's Plugin Catalog.
-- [ ] `npm run package` produces `.tar.gz`
-- [ ] ArtifactHub metadata
+- [x] `npm run package` produces `.tar.gz`
+- [x] ArtifactHub metadata
 - [ ] One-click install from Headlamp UI
 
 #### 12. Helm Chart Integration
@@ -147,7 +145,7 @@ Optional Helm chart for deploying plugin with Headlamp.
 3. Mermaid renderer — feature 4 (complex diagram visualization, enhances Query results)
 4. Remediate & Operate — features 5-6 (two-step workflows + resource detail injection)
 5. Recommend + BarChart — feature 7 (most complex multi-step workflow + chart renderer)
-6. Dashboard enhancements — features 8-10 (knowledge search, resource capabilities, detail sections)
+6. Dashboard enhancements — feature 8 (knowledge search)
 7. Distribution — features 11-12 (ArtifactHub + Helm chart)
 
 ## Decision Log
