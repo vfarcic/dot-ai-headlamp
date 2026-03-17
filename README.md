@@ -40,5 +40,7 @@ The plugin communicates with the dot-ai MCP server running in your cluster via H
 
 ## Related Projects
 
-- [DevOps AI Toolkit](https://devopstoolkit.ai) — The AI engine (MCP server) this plugin connects to
-- [dot-ai-ui](https://github.com/vfarcic/dot-ai-ui) — Standalone web UI (alternative frontend)
+- [AI Engine](https://devopstoolkit.ai/docs/ai-engine) — The MCP server this plugin connects to
+- [Web UI](https://devopstoolkit.ai/docs/ui) — Standalone web UI (alternative frontend)
+- [CLI](https://devopstoolkit.ai/docs/cli) — CLI for terminal-based interaction
+- [Controller](https://devopstoolkit.ai/docs/controller) — Kubernetes controller for autonomous operations

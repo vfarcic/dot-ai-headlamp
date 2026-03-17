@@ -104,10 +104,10 @@ The plugin works with all Headlamp distributions:
 
 ## Related Projects
 
-- **[dot-ai](https://github.com/vfarcic/dot-ai)** — DevOps AI Toolkit MCP server
-- **[dot-ai-ui](https://github.com/vfarcic/dot-ai-ui)** — Standalone web UI (alternative frontend)
-- **[dot-ai-cli](https://github.com/vfarcic/dot-ai-cli)** — CLI for terminal-based interaction
-- **[dot-ai-controller](https://github.com/vfarcic/dot-ai-controller)** — Kubernetes controller for autonomous operations
+- **[AI Engine](https://devopstoolkit.ai/docs/ai-engine)** — DevOps AI Toolkit MCP server
+- **[Web UI](https://devopstoolkit.ai/docs/ui)** — Standalone web UI (alternative frontend)
+- **[CLI](https://devopstoolkit.ai/docs/cli)** — CLI for terminal-based interaction
+- **[Controller](https://devopstoolkit.ai/docs/controller)** — Kubernetes controller for autonomous operations
 
 ---
 
