@@ -81,6 +81,16 @@ describe('AI tool endpoints', () => {
     });
   });
 
+  it('recommend omits timeout from body even if provided by caller', async () => {
+    const body = { intent: 'deploy postgres', timeout: 1234 } as any;
+    await recommend(body);
+    expect(mockDotAiRequest).toHaveBeenCalledWith('/api/v1/tools/recommend', {
+      method: 'POST',
+      body: { intent: 'deploy postgres' },
+      timeout: AI_TOOL_TIMEOUT,
+    });
+  });
+
   it('askKnowledge sends POST to knowledge/ask', async () => {
     await askKnowledge('how to scale?');
     expect(mockDotAiRequest).toHaveBeenCalledWith('/api/v1/knowledge/ask', {

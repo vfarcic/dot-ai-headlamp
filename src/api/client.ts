@@ -56,9 +56,15 @@ export async function dotAiRequest<T>(
     params.headers = headers;
   }
 
+  type ApiProxyRequestFn = (
+    path: string,
+    params: RequestInit & { timeout?: number; isJSON?: boolean; autoLogoutOnAuthError?: boolean },
+    useClusterURL?: boolean
+  ) => Promise<McpResponse<T>>;
+
   let raw: McpResponse<T>;
   try {
-    raw = await (ApiProxy.request as Function)(fullPath, params, false);
+    raw = await (ApiProxy.request as unknown as ApiProxyRequestFn)(fullPath, params, false);
   } catch (err: unknown) {
     if (err instanceof DotAiError) {
       throw err;

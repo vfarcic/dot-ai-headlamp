@@ -62,11 +62,11 @@ export function recommend(body: {
   stage?: RecommendStage;
   solutionId?: string;
   answers?: Record<string, string | number>;
-  timeout?: number;
 }): Promise<RecommendResult> {
+  const { intent, final, stage, solutionId, answers } = body;
   return dotAiRequest<RecommendResult>('/api/v1/tools/recommend', {
     method: 'POST',
-    body,
+    body: { intent, final, stage, solutionId, answers },
     timeout: AI_TOOL_TIMEOUT,
   });
 }
