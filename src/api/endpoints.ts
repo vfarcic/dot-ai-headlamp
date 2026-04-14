@@ -62,7 +62,6 @@ export function recommend(body: {
   stage?: RecommendStage;
   solutionId?: string;
   answers?: Record<string, string | number>;
-  timeout?: number;
 }): Promise<RecommendResult> {
   return dotAiRequest<RecommendResult>('/api/v1/tools/recommend', {
     method: 'POST',
